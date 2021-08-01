@@ -31,6 +31,7 @@ class ClickUp {
         List("list", "%s"),
         FolderlessList("space", "%s", "list"),
         Tasks("list", "%s", "task"),
+        WorkspaceTasks("team", "%s", "task"),
         Task("task", "%s"),
         Goals("team", "%s", "goal"),
         Goal("goal", "%s"),

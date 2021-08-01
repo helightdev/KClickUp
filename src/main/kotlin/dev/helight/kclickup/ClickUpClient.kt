@@ -85,6 +85,28 @@ interface ClickUpClient {
         .build()
         .executeAndParse<TaskList>(client).tasks
 
+    fun getAllTasks(workspaceId: String, page: Int = 0, subtasks: Boolean = false): List<Task> = Request.Builder()
+        .get()
+        .url(ClickUp.combinedUrl(endpoint, ClickUp.Apis.WorkspaceTasks, mapOf(
+            "page" to page.toString(),
+            "subtasks" to subtasks.toString()
+        ), workspaceId))
+        .build()
+        .executeAndParse<TaskList>(client).tasks
+
+    fun getAllTasksPaginated(workspaceId: String, subtasks: Boolean = false): List<Task> {
+        val result = mutableListOf<Task>()
+        var next = true
+        var index = 0
+        while (next) {
+            val cur = getAllTasks(workspaceId, page = index, subtasks = subtasks)
+            result.addAll(cur)
+            if (cur.size < 100) next = false
+            index++
+        }
+        return result
+    }
+
     fun createTask(listId: Int, taskCreateRequest: TaskCreateRequest): Task = Request.Builder()
         .post(gson.toJson(taskCreateRequest).toRequestBody("application/json".toMediaType()))
         .url(ClickUp.combinedUrl(endpoint, ClickUp.Apis.Tasks, mapOf(), listId.toString()))
